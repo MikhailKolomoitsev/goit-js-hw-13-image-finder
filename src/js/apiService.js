@@ -7,15 +7,13 @@ export default class apiService{
         this.searchQuery=''
     }
     
-    async fetchRequest(){
-    try {
-        let res = await fetch(`${baseUrl}=${this.searchQuery}&page=${this.pageNumber}&per_page=12&key=${key}`)
-        let data = await res.json()
-        this.incrementPagesNumber()
-        return data
-    } catch(e) {
-        console.log('error:' e);
-    }
+     fetchRequest(){
+         return fetch(`${baseUrl}=${this.searchQuery}&page=${this.pageNumber}&per_page=12&key=${key}`)
+             .then(response => response.json())
+             .then(data => {
+                 incrementPagesNumber();
+                 return data
+             })
     }
     get queryValue() {
         return this.searchQuery;
