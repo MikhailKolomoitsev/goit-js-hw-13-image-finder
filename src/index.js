@@ -1,17 +1,35 @@
 import './sass/main.scss';
 import CardsApiService from './js/apiService';
 import cardTemplate from './temp/cardTemplate.hbs'
+import LoadMoreBtn from './js/load-more-btn'
+const basicLightbox = require('basiclightbox');
 
 const refs = {
   searchForm: document.querySelector('.js-search-form'),
   cardsList: document.querySelector('.gallery'),
   listItem: document.querySelector('.gallery-item'),
-  loadMoreBtn: document.querySelector('[data-action="load-more"]')
 }
-const cardsApiService=new CardsApiService
+const cardsApiService = new CardsApiService;
+const loadMoreBtn = new LoadMoreBtn({
+  selector: '[data-action="load-more"]',
+  hidden: true
+});
+console.log(loadMoreBtn);
 
 refs.searchForm.addEventListener('submit', onSearch)
-refs.loadMoreBtn.addEventListener('click', onLoadMore)
+loadMoreBtn.refs.button.addEventListener('click', fetchApp)
+refs.cardsList.addEventListener('click', openModal)
+
+function openModal(event){
+if (event.target.classList.contains('gallery-item_img')) {
+    const instance = basicLightbox.create(
+      `<img src=${event.target.getAttribute('data-src')} width="800" height="600">`,
+    );
+    console.log(instance);
+    instance.show();
+    basicLightbox.visible();
+  }
+}
 
 function onSearch(e) {
   e.preventDefault();
@@ -19,12 +37,22 @@ function onSearch(e) {
 
   cardsApiService.query = e.currentTarget.elements.query.value
   clearCardsContainer()
+  loadMoreBtn.show()
   cardsApiService.resetPage()
-  cardsApiService.fetchCards().then(hits=>appendCardsMarkup(hits))
+  fetchApp()
 }
 
 function onLoadMore() {
-  cardsApiService.fetchCards().then(hits=>appendCardsMarkup(hits))
+ 
+}
+
+function fetchApp() {
+   loadMoreBtn.disable()
+  cardsApiService.fetchCards().then(hits => {
+    appendCardsMarkup(hits)
+    loadMoreBtn.enable();
+    btnScrollElem()
+  })
 }
 
 function appendCardsMarkup(hits) {
@@ -33,4 +61,11 @@ function appendCardsMarkup(hits) {
 
 function clearCardsContainer() {
   refs.cardsList.innerHTML=''
+}
+
+function btnScrollElem() {
+  loadMoreBtn.refs.button.scrollIntoView({
+    behavior: 'smooth',
+    block: 'end',
+  });
 }

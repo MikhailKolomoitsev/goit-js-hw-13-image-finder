@@ -7,11 +7,12 @@ export default class apiService {
     }
     
     fetchCards() {
-        return fetch(`${baseURL}${this.searchQuery}&page=${this.page}&per_page=12&key=${API_KEY}`)
+        const url=`${baseURL}${this.searchQuery}&page=${this.page}&per_page=12&key=${API_KEY}`
+        return fetch(url)
             .then(response => response.json())
-            .then(data => {
+            .then(({hits} )=> {
                 this.incrementPage()
-                return data.hits
+                return hits
             })
                 
 
