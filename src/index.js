@@ -1,67 +1,71 @@
 import './sass/main.scss';
-import card from './temp/card.hbs'
+import CardsApiService from './js/apiService';
+import cardTemplate from './temp/cardTemplate.hbs'
 import LoadMoreBtn from './js/load-more-btn'
-import apiService from './js/apiService';
-const { error } = require('@pnotify/core');
-import { data } from 'browserslist';
-import '@pnotify/core/dist/BrightTheme.css';
-
-var debounce = require('lodash.debounce');
 const basicLightbox = require('basiclightbox');
-const cardData = new apiService;
 
 const refs = {
-    searchForm: document.querySelector('.js-search-form'),
-    cardsList: document.querySelector('.gallery'),
-    listItem: document.querySelector('.gallery-item')
+  searchForm: document.querySelector('.js-search-form'),
+  cardsList: document.querySelector('.gallery'),
+  listItem: document.querySelector('.gallery-item'),
 }
-
+const cardsApiService = new CardsApiService;
 const loadMoreBtn = new LoadMoreBtn({
   selector: '[data-action="load-more"]',
   hidden: true
 });
+console.log(loadMoreBtn);
 
-refs.searchForm.addEventListner('sumbit', debounce(onSearch, 1000))
-refs.searchForm.addEventListner('click', clearSearchForm)
-refs.cardsList.addEventListener('click', onModal);
-loadMoreBtn.refs.button.addEventListener('click', fetchArticles);
+refs.searchForm.addEventListener('submit', onSearch)
+loadMoreBtn.refs.button.addEventListener('click', fetchApp)
+refs.cardsList.addEventListener('click', openModal)
 
-function onModal(e) {
-    if (e.target.classList.contains('gallery-item_img')) {
-        const item = basicLightbox.create(
-            `<img src=${e.target.getAttribute('data-src')} width="800" height="600">`)
-        item.show();
-        basicLightbox.visible();
-    }
-
+function openModal(event){
+if (event.target.classList.contains('gallery-item_img')) {
+    const instance = basicLightbox.create(
+      `<img src=${event.target.getAttribute('data-src')} width="800" height="600">`,
+    );
+    console.log(instance);
+    instance.show();
+    basicLightbox.visible();
+  }
 }
 
-function onSearch() {
-     if (refs.searchForm.value.trim() === '') {
-    return;
-     }
-    
-    cardData.searchQuery.value = refs.searchForm.value;
-    cardData.fetchRequest().then(img => {
-    if (img.hits.length === 0) {
-      loadMoreBtn.hide();
-      error({
-        text: 'No matches',
-      });
-    } else {
-      renderListItem(img);
-      loadMoreBtn.show();
-    }
-    });
+function onSearch(e) {
+  e.preventDefault();
+   
+
+  cardsApiService.query = e.currentTarget.elements.query.value
+  clearCardsContainer()
+  loadMoreBtn.show()
+  cardsApiService.resetPage()
+  fetchApp()
 }
 
-function renderListItem(data) {
-    refs.cardsList.insertAdjacentHTML('beforeend', card(data));
+function onLoadMore() {
+ 
 }
 
-function clearSearchForm() {
-    refs.searchForm.value = '';
-    refs.cardsList.innerHTML = '';
-    loadMoreBtn.hide()
-    
+function fetchApp() {
+   loadMoreBtn.disable()
+  cardsApiService.fetchCards().then(hits => {
+    appendCardsMarkup(hits)
+    loadMoreBtn.enable();
+    btnScrollElem()
+  })
+}
+
+function appendCardsMarkup(hits) {
+  refs.cardsList.insertAdjacentHTML('beforeend', cardTemplate(hits))
+}
+
+function clearCardsContainer() {
+  refs.cardsList.innerHTML=''
+}
+
+function btnScrollElem() {
+  loadMoreBtn.refs.button.scrollIntoView({
+    behavior: 'smooth',
+    block: 'end',
+  });
 }
