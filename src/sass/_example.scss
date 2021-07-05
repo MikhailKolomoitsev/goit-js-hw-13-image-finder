@@ -1,7 +1,70 @@
 body {
   background-color: #bff5d5;
 }
-
+.container {
+  width: 100%;
+  max-width: 1920px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
 .is-hidden {
   display: none;
+}
+
+.header {
+  text-align: center;
+}
+
+.flex-center-wrap {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.gallery-search-form {
+  display: block;
+  margin-right: auto;
+  margin-left: auto;
+}
+.gallery-search-form-input {
+  display: block;
+}
+
+.gallery {
+  max-width: 1200px;
+  margin: 10px;
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+}
+
+.gallery-item {
+  list-style: none;
+  display: block;
+  margin: 5px;
+}
+.gallery-item_img {
+  max-width: 300px;
+  display: block;
+  border-radius: 5px;
+}
+.stats {
+  margin-top: 10px;
+  display: flex;
+}
+
+.stats-item {
+  margin: 4px;
+  display: flex;
+}
+.photo-card {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+
+  height: 300px;
+  border: 1px solid teal;
+  border-radius: 5px;
 }

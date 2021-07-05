@@ -1,67 +1,36 @@
 import './sass/main.scss';
-import card from './temp/card.hbs'
-import LoadMoreBtn from './js/load-more-btn'
-import apiService from './js/apiService';
-const { error } = require('@pnotify/core');
-import { data } from 'browserslist';
-import '@pnotify/core/dist/BrightTheme.css';
-
-var debounce = require('lodash.debounce');
-const basicLightbox = require('basiclightbox');
-const cardData = new apiService;
+import CardsApiService from './js/apiService';
+import cardTemplate from './temp/cardTemplate.hbs'
 
 const refs = {
-    searchForm: document.querySelector('.js-search-form'),
-    cardsList: document.querySelector('.gallery'),
-    listItem: document.querySelector('.gallery-item')
+  searchForm: document.querySelector('.js-search-form'),
+  cardsList: document.querySelector('.gallery'),
+  listItem: document.querySelector('.gallery-item'),
+  loadMoreBtn: document.querySelector('[data-action="load-more"]')
+}
+const cardsApiService=new CardsApiService
+
+refs.searchForm.addEventListener('submit', onSearch)
+refs.loadMoreBtn.addEventListener('click', onLoadMore)
+
+function onSearch(e) {
+  e.preventDefault();
+   
+
+  cardsApiService.query = e.currentTarget.elements.query.value
+  clearCardsContainer()
+  cardsApiService.resetPage()
+  cardsApiService.fetchCards().then(hits=>appendCardsMarkup(hits))
 }
 
-const loadMoreBtn = new LoadMoreBtn({
-  selector: '[data-action="load-more"]',
-  hidden: true
-});
-
-refs.searchForm.addEventListner('sumbit', debounce(onSearch, 1000))
-refs.searchForm.addEventListner('click', clearSearchForm)
-refs.cardsList.addEventListener('click', onModal);
-loadMoreBtn.refs.button.addEventListener('click', fetchArticles);
-
-function onModal(e) {
-    if (e.target.classList.contains('gallery-item_img')) {
-        const item = basicLightbox.create(
-            `<img src=${e.target.getAttribute('data-src')} width="800" height="600">`)
-        item.show();
-        basicLightbox.visible();
-    }
-
+function onLoadMore() {
+  cardsApiService.fetchCards().then(hits=>appendCardsMarkup(hits))
 }
 
-function onSearch() {
-     if (refs.searchForm.value.trim() === '') {
-    return;
-     }
-    
-    cardData.searchQuery.value = refs.searchForm.value;
-    cardData.fetchRequest().then(img => {
-    if (img.hits.length === 0) {
-      loadMoreBtn.hide();
-      error({
-        text: 'No matches',
-      });
-    } else {
-      renderListItem(img);
-      loadMoreBtn.show();
-    }
-    });
+function appendCardsMarkup(hits) {
+  refs.cardsList.insertAdjacentHTML('beforeend', cardTemplate(hits))
 }
 
-function renderListItem(data) {
-    refs.cardsList.insertAdjacentHTML('beforeend', card(data));
-}
-
-function clearSearchForm() {
-    refs.searchForm.value = '';
-    refs.cardsList.innerHTML = '';
-    loadMoreBtn.hide()
-    
+function clearCardsContainer() {
+  refs.cardsList.innerHTML=''
 }
