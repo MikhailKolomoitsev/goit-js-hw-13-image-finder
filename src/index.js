@@ -2,7 +2,7 @@ import './sass/main.scss';
 import CardsApiService from './js/apiService';
 import cardTemplate from './temp/cardTemplate.hbs'
 import LoadMoreBtn from './js/load-more-btn'
-// import '@pnotify/core/dist/BrightTheme.css';
+import '@pnotify/core/dist/BrightTheme.css';
 const { error } = require('@pnotify/core');
 const basicLightbox = require('basiclightbox');
 
@@ -55,7 +55,8 @@ function fetchApp() {
       loadMoreBtn.hide();
       alert('write something normal')
       error({
-      text: 'No matches, write other request',
+        title: 'Error',
+        text: 'write something else',
       });
     } else {
       appendCardsMarkup(hits)
