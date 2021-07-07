@@ -53,7 +53,7 @@ function fetchApp() {
   cardsApiService.fetchCards().then(hits => {
     if (hits.length === 0) {
       loadMoreBtn.hide();
-      alert('write something normal')
+      // alert('write something normal')
       error({
         title: 'Error',
         text: 'write something else',
