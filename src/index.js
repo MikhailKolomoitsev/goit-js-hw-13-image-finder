@@ -3,6 +3,7 @@ import CardsApiService from './js/apiService';
 import cardTemplate from './temp/cardTemplate.hbs'
 import LoadMoreBtn from './js/load-more-btn'
 import '@pnotify/core/dist/BrightTheme.css';
+import '@pnotify/core/dist/PNotify.css';
 const { error } = require('@pnotify/core');
 const basicLightbox = require('basiclightbox');
 
