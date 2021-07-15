@@ -8,15 +8,10 @@ export default class apiService {
     
     async fetchCards() {
         const url = `${baseURL}${this.searchQuery}&page=${this.page}&per_page=12&key=${API_KEY}`
-        
-        return fetch(url)
-            .then(response => response.json())
-            .then(({hits} )=> {
-                this.incrementPage()
-                return hits
-            })
-                
-
+        const response = await fetch(url)
+        const  { hits } =await response.json()
+        this.incrementPage()
+        return hits
     }
     incrementPage() {
         this.page+=1
