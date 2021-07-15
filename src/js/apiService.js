@@ -6,8 +6,9 @@ export default class apiService {
         this.page=1
     }
     
-    fetchCards() {
-        const url=`${baseURL}${this.searchQuery}&page=${this.page}&per_page=12&key=${API_KEY}`
+    async fetchCards() {
+        const url = `${baseURL}${this.searchQuery}&page=${this.page}&per_page=12&key=${API_KEY}`
+        
         return fetch(url)
             .then(response => response.json())
             .then(({hits} )=> {

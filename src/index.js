@@ -49,9 +49,9 @@ function onLoadMore() {
  
 }
 
-function fetchApp() {
-   loadMoreBtn.disable()
-  cardsApiService.fetchCards().then(hits => {
+async function fetchApp() {
+  loadMoreBtn.disable()
+  const hits=await cardsApiService.fetchCards()
     if (hits.length === 0) {
       loadMoreBtn.hide();
       // alert('write something normal')
@@ -64,7 +64,7 @@ function fetchApp() {
       loadMoreBtn.enable();
       btnScrollElem()
     }
-  })
+  
 }
 
 function appendCardsMarkup(hits) {
